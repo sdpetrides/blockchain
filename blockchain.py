@@ -47,15 +47,15 @@ class Blockchain:
 
         while current_index < len(chain):
             block = chain[current_index]
-            print(f'{last_block}')
-            print(f'{block}')
-            print("\n-----------\n")
+            # print(f'{last_block}')
+            # print(f'{block}')
+            # print("\n-----------\n")
             # Check that the hash of the block is correct
             if block['previous_hash'] != self.hash(last_block):
                 return False
 
             # Check that the Proof of Work is correct
-            if not self.valid_proof(last_block['proof'], block['proof'], last_block['previous_hash']):
+            if not self.valid_proof(last_block['proof'], block['proof'], block['previous_hash']):
                 return False
 
             last_block = block
@@ -289,6 +289,16 @@ def consensus():
     return jsonify(response), 200
 
 
+@app.route('/nodes/neighbours', methods=['GET'])
+def neighbours():
+
+    response = {
+        'total_nodes': list(blockchain.nodes),
+    }
+
+    return jsonify(response), 201
+
+
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
@@ -296,5 +306,6 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
+    print(node_identifier)
 
     app.run(host='0.0.0.0', port=port)
